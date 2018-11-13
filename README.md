@@ -30,8 +30,8 @@ and also demonstrates Acra's ability to prevent known SQL injections.
 3. Now let's tune Acra's censor. There are configuration files in `./.acraconfigs/acra-server/` folder:
 - `acra-censor.norules.yaml` (allow all queries)
 - `acra-censor.ruleset01.yaml` (example: rule set to prevent simple SQL injection)
-- `acra-censor.ruleset02.yaml` (example: slightly extended rule set to prevent SQL injections)
-- `acra-censor.yaml` (active)
+- `acra-censor.ruleset02.yaml` (example: slightly extended rule set to prevent even more SQL injections)
+- `acra-censor.yaml` (active config, used by AcraCensor)
 
 `acra-censor.ruleset01.yaml` contents:
 ```yaml
@@ -61,7 +61,7 @@ You can also test two other injections:
 - into Password textbox: `' union select ccid,ccnumber,ccv,expiration,null,null,null from credit_cards -- `
 
 To block them use `acra-censor.ruleset02.yaml` configuration file for Acra's censor, which contents:
-```console
+```yaml
 ignore_parse_error: true
 handlers:
   - handler: query_capture

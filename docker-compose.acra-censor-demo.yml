@@ -38,6 +38,9 @@ services:
             --keys_output_dir=/keys/acra-connector
             --keys_public_output_dir=/keys/acra-server
 
+
+    #===== Acra ================================================================
+
     acra-server:
         image: "cossacklabs/acra-server:${ACRA_DOCKER_IMAGE_TAG:-master}"
         # Restart server after correct termination, for example after the config
@@ -46,24 +49,28 @@ services:
         depends_on:
             - acra-keymaker_server
             - acra-keymaker_connector
+        networks:
+            - acraconnector-acraserver
+            - acraserver-db
         environment:
             ACRA_MASTER_KEY: ${ACRA_MASTER_KEY:-UHZ3VUNNeTJ0SEFhbWVjNkt4eDdVYkc2WnNpUTlYa0E=}
         volumes:
             # Mount the directory with only the keys for this service. Must be
-            # rewriteable in case of using API, otherwise should be read-only. 
+            # rewriteable in case of using API, otherwise should be read-only.
             - ./.acrakeys/acra-server:/keys
             # Directory with configuration, rewriteable
             - ./.acraconfigs/acra-server:/config
         command: >-
             --mysql_enable
             --db_host=mutillidae
-            --db_port=3307
+            --db_port=3306
             --keys_dir=/keys
             --auth_keys=/keys/httpauth.accounts
             --http_api_enable
             --incoming_connection_api_string=tcp://0.0.0.0:9090
             --acracensor_config_file=/config/acra-censor.yaml
             -v
+
 
     acra-connector:
         image: "cossacklabs/acra-connector:${ACRA_DOCKER_IMAGE_TAG:-master}"
@@ -75,6 +82,9 @@ services:
         # Open the port outside for client application
         ports:
             - "3306:3306"
+        networks:
+            - acraconnector-acraserver
+            - mutillidae-acraconnector
         environment:
             ACRA_MASTER_KEY: ${ACRA_MASTER_KEY:-UHZ3VUNNeTJ0SEFhbWVjNkt4eDdVYkc2WnNpUTlYa0E=}
         volumes:
@@ -88,3 +98,41 @@ services:
             --http_api_enable
             --incoming_connection_api_string=tcp://0.0.0.0:9191
             -v
+
+
+    #===== OWASP Mutillidae II =================================================
+
+    edoz90_mutillidae:
+        # Build base image from edoz90/docker-mutillidae
+        build:
+            context: https://github.com/edoz90/docker-mutillidae.git
+        image: edoz90_mutillidae:latest
+        # We don't need to run the container based on the original image
+        entrypoint: /bin/true
+        restart: 'no'
+
+
+    mutillidae:
+        depends_on:
+            - acra-connector
+            - edoz90_mutillidae
+        build:
+            context: ./mutillidae
+        image: mutillidae:latest
+        ports:
+            - "80:80"
+            - "3306:3306"
+        networks:
+            - world
+            - mutillidae-acraconnector
+            - acraserver-db
+
+
+networks:
+    world:
+    acraserver-db:
+        internal: true
+    acraconnector-acraserver:
+        internal: true
+    mutillidae-acraconnector:
+        internal: true

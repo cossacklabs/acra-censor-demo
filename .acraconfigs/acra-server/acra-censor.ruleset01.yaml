@@ -1,0 +1,10 @@
+ignore_parse_error: true
+handlers:
+  - handler: query_capture
+    filepath: censor_log
+
+  - handler: blacklist
+    queries:
+    tables:
+    patterns:
+      - SELECT * FROM accounts WHERE username=%%VALUE%% AND password=%%VALUE%% OR %%VALUE%%=%%VALUE%

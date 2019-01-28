@@ -1,15 +1,10 @@
 ignore_parse_error: true
 handlers:
-  - handler: query_capture
-    filepath: censor_log
-
-  - handler: blacklist
+  - handler: deny
     queries:
     tables:
-      # 3 (username/password)
-      - credit_cards
     patterns:
-      # 1 (password)
       - SELECT * FROM accounts WHERE username=%%VALUE%% AND password=%%VALUE%% OR %%VALUE%%=%%VALUE%%
-      # 2 (username/password)
       - SELECT * FROM accounts WHERE username=%%VALUE%% OR %%VALUE%%=%%VALUE%% -- ' AND password=%%VALUE%%
+      - "%%UNION%%"
+  - handler: allowall

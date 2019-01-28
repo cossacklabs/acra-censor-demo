@@ -1,10 +1,44 @@
 ignore_parse_error: true
 handlers:
-  - handler: query_capture
-    filepath: censor_log
-
-  - handler: blacklist
+  - handler: query_ignore
     queries:
+      - "\r\n\tCREATE PROCEDURE getBestCollegeBasketballTeam ()\r\n\tBEGIN\r\n\t\tSELECT 'Kentucky Wildcats';\r\n\tEND;\r\n\t"
+      - "\r\n\t\tCREATE PROCEDURE authenticateUserAndReturnProfile (p_username text, p_password text)\r\n\t\tBEGIN\r\n\t\t\tSELECT  accounts.cid, \r\n\t\t          accounts.username, \r\n\t\t          accounts.password, \r\n\t\t          accounts.mysignature\r\n\t\t  FROM accounts\r\n\t\t    WHERE accounts.username = p_username\r\n\t\t      AND accounts.password = p_password;\r\n\t\tEND;\r\n\t"
+      - "\r\n\t\tCREATE PROCEDURE insertBlogEntry (\r\n\t\t  pBloggerName text,\r\n\t\t  pComment text\r\n\t\t)\r\n\t\tBEGIN\r\n\t\t\r\n\t\t  INSERT INTO blogs_table(\r\n\t\t    blogger_name, \r\n\t\t    comment, \r\n\t\t    date\r\n\t\t   )VALUES(\r\n\t\t    pBloggerName, \r\n\t\t    pComment, \r\n\t\t    now()\r\n\t\t  );\r\n\t\t\r\n\t\tEND;\r\n\t"
+  - handler: allow
+    queries: 
+      - drop database mutillidae
+      - create database mutillidae
+      - use mutillidae
+      - CREATE TABLE user_poll_results( cid INT NOT NULL AUTO_INCREMENT, tool_name TEXT, username TEXT, date DATETIME, PRIMARY KEY(cid))
+      - CREATE TABLE blogs_table( cid INT NOT NULL AUTO_INCREMENT, blogger_name TEXT, comment TEXT, date DATETIME, PRIMARY KEY(cid))
+      - create table accounts (cid int not null auto_increment, username text, password text, mysignature text, is_admin varchar(5), firstname text, lastname text, PRIMARY KEY(cid))
+      - create table credit_cards (ccid int not null auto_increment, ccnumber text, ccv text, expiration DATE, PRIMARY KEY(ccid))
+      - CREATE TABLE hitlog( cid INT NOT NULL AUTO_INCREMENT, hostname TEXT, ip TEXT, browser TEXT, referer TEXT, date DATETIME, PRIMARY KEY(cid))
+      - CREATE TABLE pen_test_tools(tool_id INT NOT NULL AUTO_INCREMENT, tool_name TEXT, phase_to_use TEXT, tool_type TEXT, comment TEXT, PRIMARY KEY(tool_id))
+      - create table captured_data (data_id int not null auto_increment,ip_address text,hostname text,port text, user_agent_string text, referrer text, data text, capture_date DATETIME, PRIMARY KEY(data_id))
+      - create table page_hints (page_name varchar(64) not null,hint_key int,hint text,primary key(page_name, hint_key))
+      - create table page_help (page_name varchar(64) not null,help_text_key int,order_preference int,PRIMARY KEY(page_name, help_text_key))
+      - CREATE TABLE level_1_help_include_files(level_1_help_include_file_key INT, level_1_help_include_file_description TEXT, level_1_help_include_file TEXT, PRIMARY KEY(level_1_help_include_file_key))
+      - CREATE TABLE help_texts(help_text_key INT, help_text TEXT, PRIMARY KEY(help_text_key))
+      - CREATE TABLE balloon_tips(tip_key VARCHAR(64) NOT NULL, hint_level INT, tip TEXT, PRIMARY KEY(tip_key, hint_level))
+      - CREATE TABLE youTubeVideos(recordIndetifier INT NOT NULL, identificationToken VARCHAR(32), title VARCHAR(128), PRIMARY KEY (recordIndetifier) UNIQUE KEY (identificationToken))
+      - SELECT username, password, mysignature, is_admin FROM accounts;
     tables:
+      - dual
+      - test
+      - hitlog
+      - user_poll_results
+      - blogs_table
+      - pen_test_tools
+      - captured_data
+      - page_hints
+      - page_help
+      - level_1_help_include_files
+      - help_texts
+      - balloon_tips
+      - youTubeVideos
     patterns:
-      - SELECT * FROM accounts WHERE username=%%VALUE%% AND password=%%VALUE%% OR %%VALUE%%=%%VALUE%
+      - "%%INSERT%%"
+      - SELECT username, password, mysignature, is_admin FROM accounts;
+  - handler: denyall

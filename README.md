@@ -28,26 +28,12 @@ and also demonstrates Acra's ability to prevent known SQL injections.
 2. Enter into "Password" text box: `' or 1='1` and press "View Account Details" button. This will construct SQL query to atabase: SELECT * FROM accounts WHERE username='' AND password='' or 1='1' which is injected with malicious instruction: ![image](https://github.com/cossacklabs/acra-censor-demo/blob/master/images/image_6.png)
 
 3. Now let's tune Acra's censor. There are configuration files in `./.acraconfigs/acra-server/` folder:
-- `acra-censor.norules.yaml` (allow all queries)
-- `acra-censor.ruleset01.yaml` (example: rule set to prevent simple SQL injection)
-- `acra-censor.ruleset02.yaml` (example: slightly extended rule set to prevent even more SQL injections)
+- `acra-censor.norules.yaml` (minimal configuration that simply creates valueless AcraCensor)
+- `acra-censor.ruleset01.yaml` (example: rule set based on typical whitelist - allow some / deny any other)
+- `acra-censor.ruleset02.yaml` (example: rule set based on typical blacklist - deny some / allow any other)
 - `acra-censor.yaml` (active config, used by AcraCensor)
 
-`acra-censor.ruleset01.yaml` contents:
-```yaml
-ignore_parse_error: true
-handlers:
-  - handler: query_capture
-    filepath: censor_log
-
-  - handler: blacklist
-    queries:
-    tables:
-    patterns:
-      - SELECT * FROM accounts WHERE username=%%VALUE%% AND password=%%VALUE%% OR %%VALUE%%=%%VALUE%
-```
-
-Replace active config with `acra-censor.ruleset01.yaml` and restart `acra-server` container:
+Replace active config with `acra-censor.ruleset01.yaml` (or `acra-censor.ruleset02.yaml`) and restart `acra-server` container:
 ```bash
 cp ./.acraconfigs/acra-server/acra-censor.ruleset01.yaml ./.acraconfigs/acra-server/acra-censor.yaml
 docker restart acra-censor-demo_acra-server_1
@@ -55,30 +41,16 @@ docker restart acra-censor-demo_acra-server_1
 
 Finally again enter into "Password" text box:`' or 1='1`. You should see exception that MySQL server has gone away. In Acra's console you can find that malicious query is forbidden: ![image](https://github.com/cossacklabs/acra-censor-demo/blob/master/images/image_7.png)
 
-You can also test two other injections:
-
+You can also test blocking other injections (if apply any of rule sets provided):
 - into Name or Password textbox: `qwerty' OR 6=6 -- `
 - into Password textbox: `' union select ccid,ccnumber,ccv,expiration,null,null,null from credit_cards -- `
 
-To block them use `acra-censor.ruleset02.yaml` configuration file for Acra's censor, which contents:
-```yaml
-ignore_parse_error: true
-handlers:
-  - handler: query_capture
-    filepath: censor_log
+Or go to the following:
+OWASP 2017 -> A1 Injection (SQL) -> SQLi Bypass Authentication -> Login:
+OWASP 2017 -> A1 Injection (SQL) -> Blind SQL via Timing -> Login
+OWASP 2017 -> A2 Broken authentication ... -> Authentication bypass -> via SQL injection -> Login
 
-  - handler: blacklist
-    queries:
-    tables:
-      # 3 (username/password)
-      - credit_cards
-    patterns:
-      # 1 (password)
-      - SELECT * FROM accounts WHERE username=%%VALUE%% AND password=%%VALUE%% OR %%VALUE%%=%%VALUE%%
-      # 2 (username/password)
-      - SELECT * FROM accounts WHERE username=%%VALUE%% OR %%VALUE%%=%%VALUE%% -- ' AND password=%%VALUE%%
-```
-```bash
-cp ./.acraconfigs/acra-server/acra-censor.ruleset02.yaml ./.acraconfigs/acra-server/acra-censor.yaml
-docker restart acra-censor-demo_acra-server_1
-```
+and try:
+
+Username: `admin`
+Password: `' or 1='1`

@@ -11,9 +11,6 @@ and also demonstrates Acra's ability to prevent known SQL injections.
 - Mutillidae docker image by @edoz90 (https://github.com/edoz90/docker-mutillidae)
 - Acra Github (https://github.com/cossacklabs/acra)
 
-### Pre-installations: 
-Currently, acra-censor is in active development phase and in order to get most fresh version of it we recommend to build acra-server docker container from sources rather than use it from dockerhub. To do it, clone original ACRA repository from https://github.com/cossacklabs/acra and build docker containers `make docker`
-
 ## How to deploy MUTILLIDAE + ACRA infrastructure:
 1. Run demo using docker-compose: `docker-compose -f docker-compose.acra-censor-demo.yml up`: ![image](https://github.com/cossacklabs/acra-censor-demo/blob/master/images/image_1.png)
 

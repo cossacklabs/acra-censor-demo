@@ -29,7 +29,7 @@ and also demonstrates Acra's ability to prevent known SQL injections.
 
 3. Now let's tune Acra's censor. There are configuration files in `./.acraconfigs/acra-server/` folder:
 - `acra-censor.norules.yaml` (minimal configuration that simply creates valueless AcraCensor)
-- `acra-censor.ruleset01.yaml` (example: rule set based on typical whitelist - allow some / deny any other)
+- `acra-censor.ruleset01.yaml` (example: rule set based on typical allowlist - allow some / deny any other)
 - `acra-censor.ruleset02.yaml` (example: rule set based on typical blacklist - deny some / allow any other)
 - `acra-censor.yaml` (active config, used by AcraCensor)
 

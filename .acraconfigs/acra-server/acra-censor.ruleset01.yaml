@@ -40,5 +40,4 @@ handlers:
       - youTubeVideos
     patterns:
       - "%%INSERT%%"
-      - SELECT username, password, mysignature, is_admin FROM accounts;
   - handler: denyall

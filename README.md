@@ -46,9 +46,9 @@ You can also test blocking other injections (if apply any of rule sets provided)
 - into Password textbox: `' union select ccid,ccnumber,ccv,expiration,null,null,null from credit_cards -- `
 
 Or go to the following:
-OWASP 2017 -> A1 Injection (SQL) -> SQLi Bypass Authentication -> Login:
-OWASP 2017 -> A1 Injection (SQL) -> Blind SQL via Timing -> Login
-OWASP 2017 -> A2 Broken authentication ... -> Authentication bypass -> via SQL injection -> Login
+- OWASP 2017 -> A1 Injection (SQL) -> SQLi Bypass Authentication -> Login
+- OWASP 2017 -> A1 Injection (SQL) -> Blind SQL via Timing -> Login
+- OWASP 2017 -> A2 Broken authentication ... -> Authentication bypass -> via SQL injection -> Login
 
 and try:
 

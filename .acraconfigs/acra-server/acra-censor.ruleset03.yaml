@@ -1,0 +1,3 @@
+ignore_parse_error: true
+handlers:
+  - handler: denyall

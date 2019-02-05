@@ -120,7 +120,7 @@ services:
             context: ./mutillidae
         image: mutillidae:latest
         ports:
-            - "80:80"
+            - "8080:80"
             - "3306:3306"
         networks:
             - world

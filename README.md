@@ -1,8 +1,16 @@
-This project illustrates how to use [AcraCensor](https://docs.cossacklabs.com/pages/documentation-acra/#acracensor-acra-s-firewall) as SQL firewall to prevent SQL injections. Target application is a famous [OWASP Mutillidae 2 application](https://github.com/webpwnized/mutillidae). 
+This project illustrates how to use [AcraCensor](https://docs.cossacklabs.com/pages/documentation-acra/#acracensor-acra-s-firewall) as SQL firewall to prevent SQL injections. Target application is a famous vulnerable web application [OWASP Mutillidae 2](https://github.com/webpwnized/mutillidae). 
 
-Demo project is a set of Docker containers, Acra works as proxy between web and database, thus AcraCensor inspect every SQL query that runs from the web application to the database, and back.
+Demo project itself has a [Docker compose file](docker-compose.acra-censor-demo.yml), that runs the following web infrastructure:
+- OWASP Mutillidae web application,
+- [Acra encryption suite](https://github.com/cossacklabs/acra).
+
+Acra works as proxy between web and database, thus AcraCensor inspect every SQL query that runs from the web application to the database, and back.
 
 <p align="center"><img src="images/acra-censor-scheme.png" alt="Protecting OWASP web application: Acra architecture with AcraCensor" width="700"></p>
+
+This is slide from [Artem Storozhuk talk](https://speakerdeck.com/storojs72/building-sql-firewall-insights-from-developers) about building SQL firewalls, that illustrates how SQL firewalls can prevent more SQLi than WAF.
+
+<img src="images/SQL-firewall-vs-WAF.png" width="600">
 
 
 ## How to run demo
@@ -35,12 +43,11 @@ In docker console you should see SQL queries in Acra logs. After resetting the d
 
 <img src="images/image_4.png" width="700">
 
-## How to prevent SQL injections
+## How to perform SQL injections
 
 1. First, select a vulnerable web page. In left menu go to "OWASP 2017" -> "A1 - Injection (SQL)" -> "SQLi - Extract data" -> User Info (SQL)
 
 <img src="images/image_5.png" width="700">
-
 <img src="images/image_5a.png" width="700">
 
 2. Now let's run SQL injection. Try to login any name and password `' or 1='1`. 
@@ -49,7 +56,10 @@ This will construct SQL query to database: `SELECT * FROM accounts WHERE usernam
 
 <img src="images/image_6.png" width="700">
 
-3. Now let's tune AcraCensor to prevent this injection. 
+
+## How to prevent SQL injections
+
+1. Now let's tune AcraCensor to prevent this injection. 
 
 There are configuration files in `./.acraconfigs/acra-server/` folder:
 - `acra-censor.norules.yaml` (minimal configuration that simply creates valueless AcraCensor)
@@ -74,11 +84,7 @@ acra-censor-demo-master_acra-server_1_979c50cd7b3e exited with code 0
 ```
 
 
-4. Try if new AcraCensor configuration prevents injections.
-
-<img src="images/SQL-firewall-vs-WAF.png" width="700">
-AcraCensor detects SQL injections better that WAF
-
+2. Try if new AcraCensor configuration prevents injections.
 
 At the same web page try to login again using password `' or 1='1`. 
 
@@ -86,13 +92,13 @@ You should see exception that MySQL server has gone away. In Acra's console you 
 
 <img src="images/image_7.png" width="700">
 
-5. Try other SQL injections
+3. Try other SQL injections
 
 You can also test blocking other injections (if apply any of rule sets provided):
 - into Name or Password textbox: `qwerty' OR 6=6 -- `
 - into Password textbox: `' union select ccid,ccnumber,ccv,expiration,null,null,null from credit_cards -- `
 
-6. Try other vulnerable web pages. Select one of the following:
+4. Try other vulnerable web pages. Select one of the following:
 
 - OWASP 2017 -> A1 Injection (SQL) -> SQLi Bypass Authentication -> Login
 - OWASP 2017 -> A1 Injection (SQL) -> Blind SQL via Timing -> Login
@@ -104,7 +110,7 @@ and try to use `admin` as username and `' or 1='1` as password.
 
 Let us know if you have any questions by dropping an email to [dev@cossacklabs.com](mailto:dev@cossacklabs.com).
 
-1. Read more about how SQL firewall works and how it's different from WAF.
+1. Read more about how SQL firewall works and how it is different from WAF.
 2. Watch slides about developers' perspective on [building SQL firewall](https://speakerdeck.com/storojs72/building-sql-firewall-insights-from-developers).
 3. [cossacklabs/acra](https://github.com/cossacklabs/acra) – the main Acra repository contains tons of examples and documentation about Acra itself.
 4. Play around with other [pre-built applications protected by Acra](https://github.com/cossacklabs/acra-engineering-demo/).

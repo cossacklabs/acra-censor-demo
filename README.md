@@ -15,7 +15,8 @@ This is slide from [Artem Storozhuk talk](https://speakerdeck.com/storojs72/buil
 
 ## Screencast
 
-[![Watch the video](images/youtube-video.png)](https://youtu.be/ABjIfx2_hJk)
+<a href="https://youtu.be/ABjIfx2_hJk" target="_blank"><img src="images/youtube-video.png" alt="Watch the video" width="700"></a> 
+
 
 ## How to run demo
 

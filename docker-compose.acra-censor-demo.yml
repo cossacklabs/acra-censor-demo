@@ -42,7 +42,7 @@ services:
     #===== Acra ================================================================
 
     acra-server:
-        image: "cossacklabs/acra-server:${ACRA_DOCKER_IMAGE_TAG:-master}"
+        image: "cossacklabs/acra-server:${ACRA_DOCKER_IMAGE_TAG:-latest}"
         # Restart server after correct termination, for example after the config
         # was changed through the API
         restart: always
@@ -73,7 +73,7 @@ services:
 
 
     acra-connector:
-        image: "cossacklabs/acra-connector:${ACRA_DOCKER_IMAGE_TAG:-master}"
+        image: "cossacklabs/acra-connector:${ACRA_DOCKER_IMAGE_TAG:-latest}"
         restart: always
         depends_on:
             - acra-keymaker_server
@@ -120,7 +120,7 @@ services:
             context: ./mutillidae
         image: mutillidae:latest
         ports:
-            - "80:80"
+            - "8080:80"
             - "3306:3306"
         networks:
             - world

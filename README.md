@@ -52,12 +52,12 @@ In docker console you should see SQL queries in Acra logs. After resetting the d
 
 2. Now let's run SQL injection. Try to login any name and password `' or 1='1`. 
 
-This will construct SQL query to database: `SELECT * FROM accounts WHERE username='' AND password='' or 1='1'` which is infected with malicious instruction. 
+This will construct SQL query to database: `SELECT * FROM accounts WHERE username='' AND password='' or 1='1'` which contains a typical SQL injection. 
 
 <img src="images/image_6.png" width="700">
 
 
-## How to prevent SQL injections
+## How AcraCensor prevents SQL injections
 
 1. Now let's tune AcraCensor to prevent this injection. 
 

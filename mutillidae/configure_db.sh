@@ -20,7 +20,7 @@ EOF
 
 cat <<EOF > /usr/share/nginx/html/mutillidae/includes/database-config.php
 <?php
-define('DB_HOST', 'acra-connector');
+define('DB_HOST', 'acra-server');
 define('DB_USERNAME', '${MYSQL_USER}');
 define('DB_PASSWORD', '${MYSQL_PASSWORD}');
 define('DB_NAME', '${MYSQL_DB}');

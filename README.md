@@ -12,6 +12,7 @@ This project illustrates how to use [AcraCensor](https://docs.cossacklabs.com/pa
 1. Use docker-compose command to set up and run the whole infrastructure: 
 
 ```
+export ACRA_DOCKER_IMAGE_TAG='master'
 docker-compose -f docker-compose.acra-censor-demo.yml up
 ```
 

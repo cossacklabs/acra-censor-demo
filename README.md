@@ -13,6 +13,10 @@ This is slide from [Artem Storozhuk talk](https://speakerdeck.com/storojs72/buil
 <img src="images/SQL-firewall-vs-WAF.png" width="600">
 
 
+## Screencast
+
+[![Watch the video](images/youtube-video.png)](https://youtu.be/ABjIfx2_hJk)
+
 ## How to run demo
 
 1. Use docker-compose command to set up and run the whole infrastructure: 

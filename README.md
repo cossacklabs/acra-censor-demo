@@ -4,7 +4,7 @@ The demo project has a [Docker compose file](docker-compose.acra-censor-demo.yml
 - OWASP Mutillidae web application,
 - [Acra encryption suite](https://github.com/cossacklabs/acra).
 
-Acra works as a proxy between web and database. AcraCensor inspect every SQL query that runs from the web application to the database, and back.
+Acra works as a proxy between web and database. AcraCensor inspects every SQL query that runs from the web application to the database, and back.
 
 <p align="center"><img src="images/acra-censor-scheme.png" alt="Protecting OWASP web application: Acra architecture with AcraCensor" width="700"></p>
 

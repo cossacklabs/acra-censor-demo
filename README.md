@@ -23,7 +23,6 @@ This is a slide from [a talk by Cossack Labs' security software engineer Artem S
 1. Use docker-compose command to set up and run the whole infrastructure: 
 
 ```
-export ACRA_DOCKER_IMAGE_TAG='master'
 docker-compose -f docker-compose.acra-censor-demo.yml up
 ```
 

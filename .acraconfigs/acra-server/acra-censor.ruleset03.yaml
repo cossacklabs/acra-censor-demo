@@ -1,3 +1,4 @@
 ignore_parse_error: true
+version: 0.85.0
 handlers:
   - handler: denyall

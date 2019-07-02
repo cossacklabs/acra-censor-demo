@@ -103,9 +103,9 @@ services:
     #===== OWASP Mutillidae II =================================================
 
     edoz90_mutillidae:
-        # Build base image from edoz90/docker-mutillidae
+        # Build base image
         build:
-            context: https://github.com/edoz90/docker-mutillidae.git
+            context: https://github.com/storojs72/docker-mutillidae.git
         image: edoz90_mutillidae:latest
         # We don't need to run the container based on the original image
         entrypoint: /bin/true

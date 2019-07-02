@@ -8,7 +8,7 @@ MYSQL_DB='mutillidae'
 MYSQL_USER='mutillidae'
 MYSQL_PASSWORD='mutillidae'
 
-cat <<EOF | /usr/bin/mysqld --user=mysql --bootstrap --verbose=0
+cat <<EOF | /usr/bin/mysqld --datadir='./data' --user=mysql --bootstrap --verbose=0
 USE mysql;
 FLUSH PRIVILEGES;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' identified by '${MYSQL_ROOT_PASSWORD}' WITH GRANT OPTION;

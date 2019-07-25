@@ -1,4 +1,10 @@
+# What is this?
+
 This project illustrates how to use [AcraCensor](https://docs.cossacklabs.com/pages/documentation-acra/#acracensor-acra-s-firewall) as SQL firewall to prevent SQL injections. Target application is a well-known vulnerable web application [OWASP Mutillidae 2](https://github.com/webpwnized/mutillidae). 
+
+AcraCensor – is a built-in SQL firewall of [Acra data protection suite](https://cossacklabs.com/acra/). This project is one of numerous Acra's example applications. If you are curious about other Acra features, like transparent encryption, intrusion detection, load balancing support – [Acra Example Applications](https://github.com/cossacklabs/acra-engineering-demo/).
+
+# What's inside?
 
 The demo project has a [Docker compose file](docker-compose.acra-censor-demo.yml) that runs the following web infrastructure:
 - OWASP Mutillidae web application,
@@ -110,19 +116,21 @@ You can also test the process of blocking other injections (if applies to any of
 
 and try to use `admin` as a username and `' or 1='1` as a password.
 
-## What to do next
+## Learn more
+
+1. Read more about [how SQL firewall works and how it is different from WAF](https://www.cossacklabs.com/blog/sql-firewall-vs-waf-against-sqli.html).
+2. Read out blog post [how we built AcraCensor](https://www.cossacklabs.com/blog/how-to-build-sql-firewall-acracensor.html).
+3. Watch the slides about the developers' perspective on [building SQL firewall](https://speakerdeck.com/storojs72/building-sql-firewall-insights-from-developers).
+4. Check [Mutillidae repository](https://github.com/webpwnized/mutillidae).
+5. Check [Mutillidae docker image by @edoz90](https://github.com/edoz90/docker-mutillidae).
+
+# Further steps
 
 Let us know if you have any questions by dropping an email to [dev@cossacklabs.com](mailto:dev@cossacklabs.com).
 
-1. Read more about how SQL firewall works and how it is different from WAF.
-2. See the slides about the developers' perspective on [building SQL firewall](https://speakerdeck.com/storojs72/building-sql-firewall-insights-from-developers).
-3. Visit [cossacklabs/acra](https://github.com/cossacklabs/acra) – the main Acra repository that contains tons of examples and documentation about Acra (full documentation for Acra is on the [Documentation Server](https://docs.cossacklabs.com/products/acra/)). 
-4. Play around with other [pre-built applications protected by Acra](https://github.com/cossacklabs/acra-engineering-demo/).
+1. [Acra features](https://cossacklabs.com/acra/) – check out full features set and available licenses.
+2. Other [Acra example applications](https://github.com/cossacklabs/acra-engineering-demo/) – try other Acra features, like transparent encryption, SQL firewall, load balancing support.
 
+# Need help?
 
-## Resources
-
-- Using Acra in Docker (https://docs.cossacklabs.com/pages/trying-acra-with-docker/#using-acra-in-docker).
-- Mutillidae Github (https://github.com/webpwnized/mutillidae).
-- Mutillidae docker image by @edoz90 (https://github.com/edoz90/docker-mutillidae).
-- Acra Github (https://github.com/cossacklabs/acra).
+Need help in configuring Acra? Our support is available for [Acra Pro and Acra Enterprise versions](https://www.cossacklabs.com/acra/#pricing).

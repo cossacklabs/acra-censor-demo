@@ -1,138 +1,77 @@
 version: "3"
 
 services:
-    # Create keys:
-    # - ./.acrakeys/acra-server/${ACRA_CLIENT_ID}_server
-    # - ./.acrakeys/acra-connector/${ACRA_CLIENT_ID}_server.pub
-    acra-keymaker_server:
-        # You can specify docker image tag in the environment
-        # variable ACRA_DOCKER_IMAGE_TAG or run by default with 'latest' images
-        image: "cossacklabs/acra-keymaker:${ACRA_DOCKER_IMAGE_TAG:-latest}"
-        environment:
-            # INSECURE!!! You MUST define your own ACRA_MASTER_KEY
-            # The default is only for testing purposes
-            ACRA_MASTER_KEY: ${ACRA_MASTER_KEY:-UHZ3VUNNeTJ0SEFhbWVjNkt4eDdVYkc2WnNpUTlYa0E=}
-        volumes:
-            # Mount the whole ./.acrakeys directory to be able generate keys and
-            # place them in services' subdirectories
-            - ./.acrakeys:/keys
-        # Please specify ACRA_CLIENT_ID environment variable, otherwise run with
-        # default 'testclientid' client id
-        command: >-
-            --client_id=${ACRA_CLIENT_ID:-testclientid}
-            --generate_acraserver_keys
-            --keys_output_dir=/keys/acra-server
-            --keys_public_output_dir=/keys/acra-connector
-    # Create keys:
-    # - ./.acrakeys/acra-connector/${ACRA_CLIENT_ID}
-    # - ./.acrakeys/acra-server/${ACRA_CLIENT_ID}.pub
-    acra-keymaker_connector:
-        image: "cossacklabs/acra-keymaker:${ACRA_DOCKER_IMAGE_TAG:-latest}"
-        environment:
-            ACRA_MASTER_KEY: ${ACRA_MASTER_KEY:-UHZ3VUNNeTJ0SEFhbWVjNkt4eDdVYkc2WnNpUTlYa0E=}
-        volumes:
-            - ./.acrakeys:/keys
-        command: >-
-            --client_id=${ACRA_CLIENT_ID:-testclientid}
-            --generate_acraconnector_keys
-            --keys_output_dir=/keys/acra-connector
-            --keys_public_output_dir=/keys/acra-server
-
-
     #===== Acra ================================================================
-
     acra-server:
-        image: "cossacklabs/acra-server:${ACRA_DOCKER_IMAGE_TAG:-latest}"
+        image: "cossacklabs/acra-server:${ACRA_DOCKER_IMAGE_TAG:-0.95.0}"
         # Restart server after correct termination, for example after the config
         # was changed through the API
         restart: always
-        depends_on:
-            - acra-keymaker_server
-            - acra-keymaker_connector
         networks:
-            - acraconnector-acraserver
+            - mutillidae-acraserver
             - acraserver-db
         environment:
             ACRA_MASTER_KEY: ${ACRA_MASTER_KEY:-UHZ3VUNNeTJ0SEFhbWVjNkt4eDdVYkc2WnNpUTlYa0E=}
         volumes:
             # Mount the directory with only the keys for this service. Must be
             # rewriteable in case of using API, otherwise should be read-only.
-            - ./.acrakeys/acra-server:/keys
             # Directory with configuration, rewriteable
             - ./.acraconfigs/acra-server:/config
         command: >-
             --mysql_enable
-            --db_host=mutillidae
+            --db_host=database
             --db_port=3306
-            --keys_dir=/keys
-            --auth_keys=/keys/httpauth.accounts
-            --http_api_enable
-            --incoming_connection_api_string=tcp://0.0.0.0:9090
+            --keystore_cache_on_start_enable=false
             --acracensor_config_file=/config/acra-censor.yaml
-            -v
-
-
-    acra-connector:
-        image: "cossacklabs/acra-connector:${ACRA_DOCKER_IMAGE_TAG:-latest}"
-        restart: always
-        depends_on:
-            - acra-keymaker_server
-            - acra-keymaker_connector
-            - acra-server
-        # Open the port outside for client application
-        ports:
-            - "3306:3306"
-        networks:
-            - acraconnector-acraserver
-            - mutillidae-acraconnector
-        environment:
-            ACRA_MASTER_KEY: ${ACRA_MASTER_KEY:-UHZ3VUNNeTJ0SEFhbWVjNkt4eDdVYkc2WnNpUTlYa0E=}
-        volumes:
-            # Mount the directory with only the keys for this service
-            - ./.acrakeys/acra-connector:/keys:ro
-        command: >-
-            --acraserver_connection_host=acra-server
-            --keys_dir=/keys
-            --client_id=${ACRA_CLIENT_ID:-testclientid}
-            --incoming_connection_string=tcp://0.0.0.0:3306
-            --http_api_enable
-            --incoming_connection_api_string=tcp://0.0.0.0:9191
-            -v
-
+            --v
+            --d
 
     #===== OWASP Mutillidae II =================================================
 
-    edoz90_mutillidae:
-        # Build base image
-        build:
-            context: https://github.com/storojs72/docker-mutillidae.git
-        image: storojs72/edoz90_mutillidae:latest
-        # We don't need to run the container based on the original image
-        entrypoint: /bin/true
-        restart: 'no'
-
-
     mutillidae:
+        container_name: mutillidae
         depends_on:
-            - acra-connector
-            - edoz90_mutillidae
+            - database
+            - acra-server
+        image: mutillidae
         build:
-            context: ./mutillidae
-        image: mutillidae:latest
+            context: https://github.com/webpwnized/mutillidae-docker.git#1.0.39:www
+            args:
+                DATABASE_HOST: acra-server
+                DATABASE_PORT: 9393
         ports:
-            - "8080:80"
-            - "3306:3306"
+            - 127.0.0.1:8080:80
         networks:
             - world
-            - mutillidae-acraconnector
+            - mutillidae-acraserver
+
+    #===== OWASP Mutillidae DB =================================================
+
+    database:
+        container_name: database
+        image: webpwnized/mutillidae:database
+        healthcheck:
+            test: "/usr/bin/mysql --user=root --password=mutillidae --execute \"SHOW DATABASES;\""
+            interval: 5s
+            timeout: 30s
+            retries: 10
+        build:
+            context: https://github.com/webpwnized/mutillidae-docker.git#1.0.39:database
+        networks:
             - acraserver-db
 
+    healthcheck-wait:
+        image: busybox
+        container_name: healthcheck-wait
+        depends_on:
+            database:
+                condition: service_healthy
 
 networks:
     world:
     acraserver-db:
         internal: true
-    acraconnector-acraserver:
+    mutillidae-acraserver:
         internal: true
-    mutillidae-acraconnector:
+    mutillidae-db:
         internal: true

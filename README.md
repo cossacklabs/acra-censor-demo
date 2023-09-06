@@ -1,6 +1,6 @@
 # What is this?
 
-This project illustrates how to use [AcraCensor](https://docs.cossacklabs.com/pages/documentation-acra/#acracensor-acra-s-firewall) as SQL firewall to prevent SQL injections. Target application is a well-known vulnerable web application [OWASP Mutillidae 2](https://github.com/webpwnized/mutillidae). 
+This project illustrates how to use [AcraCensor](https://docs.cossacklabs.com/pages/documentation-acra/#acracensor-acra-s-firewall) as SQL firewall to prevent SQL injections. Target application is a well-known vulnerable web application [OWASP Mutillidae 2](https://github.com/webpwnized/mutillidae).
 
 AcraCensor – is a built-in SQL firewall of [Acra data protection suite](https://cossacklabs.com/acra/). This project is one of numerous Acra's example applications. If you are curious about other Acra features, like transparent encryption, intrusion detection, load balancing support – [Acra Example Applications](https://github.com/cossacklabs/acra-engineering-demo/).
 
@@ -21,21 +21,21 @@ This is a slide from [a talk by Cossack Labs' security software engineer Artem S
 
 ## Screencast
 
-<a href="https://youtu.be/ABjIfx2_hJk" target="_blank"><img src="images/youtube-video.png" alt="Watch the video" width="700"></a> 
+<a href="https://youtu.be/ABjIfx2_hJk" target="_blank"><img src="images/youtube-video.png" alt="Watch the video" width="700"></a>
 
 
 ## How to run the demo
 
-1. Use docker-compose command to set up and run the whole infrastructure: 
+1. Use docker-compose command to set up and run the whole infrastructure:
 
 ```
-docker-compose -f docker-compose.acra-censor-demo.yml up
+docker-compose -f docker-compose.acra-censor-demo.yml up --build
 ```
 
 <img src="images/image_1.png" width="700">
 
 
-2. Check that the containers are up and running: 
+2. Check that the containers are up and running:
 
 ```
 docker ps -a
@@ -47,7 +47,7 @@ docker ps -a
 
 <img src="images/image_3.png" width="700">
 
-4. The database is still empty so we need to fill it first by clicking on `setup/reset the DB`. 
+4. The database is still empty so we need to fill it first by clicking on `Click here to attempt to setup the database` and then `Opt out of database warnings`.
 
 In the Docker console you should see SQL queries in Acra logs. After resetting the database, the main page of Mutillidae application looks like this:
 
@@ -60,16 +60,16 @@ In the Docker console you should see SQL queries in Acra logs. After resetting t
 <img src="images/image_5.png" width="700">
 <img src="images/image_5a.png" width="700">
 
-2. Now, let's run an SQL injection. Try to login any name and password `' or 1='1`. 
+2. Now, let's run an SQL injection. Try to login any name and password `' or 1='1`.
 
-This will construct an SQL query `SELECT * FROM accounts WHERE username='' AND password='' or 1='1'` — containing a typical SQL injection — to the database. 
+This will construct an SQL query `SELECT * FROM accounts WHERE username='' AND password='' or 1='1'` — containing a typical SQL injection — to the database.
 
 <img src="images/image_6.png" width="700">
 
 
 ## How AcraCensor prevents SQL injections
 
-1. Now, let's fine-tune AcraCensor for preventing this injection. 
+1. Now, let's fine-tune AcraCensor for preventing this injection.
 
 There are configuration files in `./.acraconfigs/acra-server/` folder:
 - `acra-censor.norules.yaml` (minimal configuration that simply creates valueless AcraCensor);
@@ -83,7 +83,7 @@ Replace the active config with `acra-censor.ruleset01.yaml` (or `acra-censor.rul
 
 ```bash
 cp ./.acraconfigs/acra-server/acra-censor.ruleset01.yaml ./.acraconfigs/acra-server/acra-censor.yaml
-docker restart <name or ID of acra-censor-demo_acra-server container>
+docker restart acra-censor-demo_acra-server_1
 ```
 
 In the docker log, you will see that AcraServer has restarted with an updated configuration file:
@@ -96,9 +96,9 @@ acra-censor-demo-master_acra-server_1_979c50cd7b3e exited with code 0
 
 2. Test if the new AcraCensor configuration prevents injections.
 
-On the same web page, try to login again using the password `' or 1='1`. 
+On the same web page, try to login again using the password `' or 1='1`.
 
-You should see that the response from MySQL server is blocked. In Acra's console, you can see that the malicious query is forbidden: 
+You should see that the response from MySQL server is blocked. In Acra's console, you can see that the malicious query is forbidden:
 
 <img src="images/image_7.png" width="700">
 
@@ -122,7 +122,7 @@ and try to use `admin` as a username and `' or 1='1` as a password.
 2. Read out blog post [how we built AcraCensor](https://www.cossacklabs.com/blog/how-to-build-sql-firewall-acracensor.html).
 3. Watch the slides about the developers' perspective on [building SQL firewall](https://speakerdeck.com/storojs72/building-sql-firewall-insights-from-developers).
 4. Check [Mutillidae repository](https://github.com/webpwnized/mutillidae).
-5. Check [Mutillidae docker image by @edoz90](https://github.com/edoz90/docker-mutillidae).
+5. Check [Mutillidae docker](https://github.com/webpwnized/mutillidae-docker).
 
 # Further steps
 
